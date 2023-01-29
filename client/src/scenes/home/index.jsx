@@ -5,11 +5,53 @@ import RenderCard from "../../components/RenderCard";
 
 let Home = () => {
   let [isLoading, setIsLoading] = useState(false);
-  let [allPost, setAllPost] = useState([null]);
+  let [allPost, setAllPost] = useState([]);
   let [searchText, setSearchText] = useState("");
+  let [searchResult, setSearchResult] = useState(null);
+  const [searchTimeout, setSearchTimeout] = useState(null);
+
+  let fetchPost = async () => {
+    setIsLoading(true);
+    try {
+      let response = await fetch("http://localhost:8001/api/v1/post", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        let result = await response.json();
+        setAllPost(result.data.reverse());
+      }
+    } catch (error) {
+      alert(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPost();
+  }, []);
+
+  let handleSearchChange = (e) => {
+    setSearchText(e.target.value);
+
+    setSearchTimeout(
+      setTimeout(() => {
+        let searchResult = allPost.filter(
+          (item) =>
+            item.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            item.prompt.toLowerCase().includes(searchText.toLowerCase())
+        );
+        setSearchResult(searchResult);
+      }, 500)
+    );
+  };
+
   return (
     <>
-      <section className="max-w-7x1 mx-auto">
+      <section className="max-w-7xl mx-auto">
         <div>
           <h1 className="font-extrabold text-[#222328] text-[32px]">
             The Community Showcase
@@ -20,7 +62,14 @@ let Home = () => {
           </p>
         </div>
         <div className="mt-16 ">
-          <FormField />
+          <FormField
+            labelName="Search Posts"
+            type="text"
+            value={searchText}
+            name="text"
+            placeholder="Search Posts"
+            handleChange={handleSearchChange}
+          />
         </div>
         <div className="mt-10">
           {isLoading ? (
@@ -35,11 +84,14 @@ let Home = () => {
                   <span className="text-[#222328]"> {searchText} </span>
                 </h2>
               )}
-              <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 grid-3">
+              <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3">
                 {searchText ? (
-                  <RenderCard data={[]} title="No search result found" />
+                  <RenderCard
+                    data={searchResult}
+                    title="No search result found"
+                  />
                 ) : (
-                  <RenderCard data={[]} title="No post found" />
+                  <RenderCard data={allPost} title="No post yet" />
                 )}
               </div>
             </>

@@ -1,7 +1,7 @@
 import Card from "./Card";
 
 let RenderCard = ({ data, title }) => {
-  if (data.length > 0) {
+  if (data?.length > 0) {
     return data.map((post) => <Card key={post._id} {...post} />);
   } else {
     return (
