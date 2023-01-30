@@ -13,12 +13,15 @@ let Home = () => {
   let fetchPost = async () => {
     setIsLoading(true);
     try {
-      let response = await fetch("http://localhost:8001/api/v1/post", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      let response = await fetch(
+        `${import.meta.env.VITE_REACT_APP_BASE_URL}/api/v1/post`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (response.ok) {
         let result = await response.json();
         setAllPost(result.data.reverse());

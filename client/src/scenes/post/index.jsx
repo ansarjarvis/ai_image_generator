@@ -22,13 +22,16 @@ let Posts = () => {
     if (form.prompt && form.photo) {
       setIsLoading(true);
       try {
-        let response = await fetch("http://localhost:8001/api/v1/post", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(form),
-        });
+        let response = await fetch(
+          `${import.meta.env.VITE_REACT_APP_BASE_URL}/api/v1/post`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(form),
+          }
+        );
         await response.json();
         navigate("/");
       } catch (error) {
@@ -51,13 +54,16 @@ let Posts = () => {
     if (form.prompt) {
       try {
         setIsGeneratingImage(true);
-        let response = await fetch("http://localhost:8001/api/v1/homer", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ prompt: form.prompt }),
-        });
+        let response = await fetch(
+          `${import.meta.env.VITE_REACT_APP_BASE_URL}/api/v1/homer`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ prompt: form.prompt }),
+          }
+        );
 
         let data = await response.json();
         setForm({
